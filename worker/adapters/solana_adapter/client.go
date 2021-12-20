@@ -25,7 +25,7 @@ type SolanaClient interface {
 	//GetAccountWealthDecentralization()
 }
 
-func NewClient() SolanaClient {
+func NewClient() solanaClient {
 	apiClient := sw.NewAPIClient(sw.NewConfiguration())
 	return solanaClient{apiClient}
 }
