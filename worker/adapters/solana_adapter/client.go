@@ -22,6 +22,7 @@ type SolanaClient interface {
 	GetClientsDecentralization() []models.ClientDecentralization
 	//GetNodeDecentralization() []models.NodeDecentralization
 	//GetPOWDecentralization() []models.
+	//GetAccountWealthDecentralization()
 }
 
 func NewClient() SolanaClient {
