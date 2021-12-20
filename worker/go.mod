@@ -1,4 +1,4 @@
-module github.com/victorlau1/decentralized_dashboard
+module github.com/victorlau1/worker
 
 go 1.17
 

@@ -39,5 +39,5 @@ func getClients() {
 	auth := NewAuthorizationHeaders()
 	request := client.OtherApi.FetchNonValidators(auth)
 	resp, _, _ := request.Execute()
-	fmt.Print(resp)
+	fmt.Printf("%+v\n", resp)
 }
