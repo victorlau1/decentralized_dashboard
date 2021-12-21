@@ -19,17 +19,10 @@ type solanaBeachNonValidatorModel struct {
 }
 
 func (sb *solanaBeachTransformations) HandleClientTransformation(solanaResponse interface{}) (models.ClientDecentralization, error) {
-<<<<<<< HEAD
-	nm := models.ClientDecentralization{}
-=======
 	// nm := models.ClientDecentralization{}
->>>>>>> test: add transformation scaffold
 	// res, ok := solanaResponse.(solanaBeachNonValidatorModel); ok {
 	// 	res.Location.
 	// }
 	// return nm, err
-<<<<<<< HEAD
-=======
 	return models.ClientDecentralization{}, nil
->>>>>>> test: add transformation scaffold
 }
