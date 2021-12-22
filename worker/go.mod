@@ -8,6 +8,7 @@ require (
 )
 
 require (
+	github.com/elastic/go-elasticsearch/v8 v8.0.0-20211123103400-5f8a17a2322f
 	github.com/fsnotify/fsnotify v1.5.1 // indirect
 	github.com/go-playground/assert/v2 v2.0.1 // indirect
 	github.com/go-playground/locales v0.14.0 // indirect
