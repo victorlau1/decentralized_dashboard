@@ -9,6 +9,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/pariz/gountries"
 	sw "github.com/victorlau1/solanaclient"
 	"github.com/victorlau1/worker/models"
 )
@@ -254,13 +255,18 @@ func EthereumToNewLineJSON() {
 	b := new(bytes.Buffer)
 	enc := json.NewEncoder(b)
 
+	query := gountries.New()
+
 	data := string(f)
 	rows := strings.Split(data, "\n")
 	for _, row := range rows {
 		cols := strings.Split(row, "\t")
 		// fmt.Println(cols)
 		nm := models.ClientDecentralization{}
-		nm.Country = cols[3]
+
+		country, _ := query.FindCountryByName(cols[3])
+
+		nm.Country = country.Alpha2
 		nm.Client = cols[4]
 		//nm.Region
 		//nm.Timezone
