@@ -18,5 +18,5 @@ func TestClientDecentralizationRequiredFields(t *testing.T) {
 		found = append(found, err.Field())
 	}
 
-	assert.Equal(t, found, []string{"Country", "Region", "Blockchain", "Timestamp"})
+	assert.Equal(t, found, []string{"Country", "Region", "Blockchain", "Timestamp", "Client"})
 }

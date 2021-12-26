@@ -5,10 +5,13 @@ import (
 )
 
 type ClientDecentralization struct {
-	Country    string `validate:"required"`
-	Region     string `validate:"required"`
-	Timezone   string
-	City       string
-	Blockchain string    `validate:"required"`
-	Timestamp  time.Time `validate:"required"`
+	Country      string `validate:"required"`
+	Client       string `validate:"required"`
+	Region       string `validate:"required"`
+	Timezone     string
+	City         string
+	Blockchain   string    `validate:"required"`
+	Timestamp    time.Time `validate:"required"`
+	Version      string    `validate:"required"`
+	Organization string    // Organization who owns this
 }

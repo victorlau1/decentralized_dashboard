@@ -2,7 +2,10 @@ package solanaadapter
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
+	"os"
+	"time"
 
 	"github.com/victorlau1/worker/models"
 
@@ -11,23 +14,32 @@ import (
 )
 
 type solanaClient struct {
-	client *sw.APIClient
+	client          *sw.APIClient
+	transformations Transformations
 }
 
 type solanaConfiguration struct {
 	configuration *sw.Configuration
 }
 
+// SolanaClient is the client used to retrieve the data from the SolanaBlockchain
+// The client must return the models in the expected structure for ElasticSearch consumption
 type SolanaClient interface {
-	GetClientsDecentralization() []models.ClientDecentralization
+	GetClientsDecentralization() ([]models.ClientDecentralization, error)
 	//GetNodeDecentralization() []models.NodeDecentralization
 	//GetPOWDecentralization() []models.
 	//GetAccountWealthDecentralization()
 }
 
-func NewClient() solanaClient {
-	apiClient := sw.NewAPIClient(sw.NewConfiguration())
-	return solanaClient{apiClient}
+func NewClient(solClient *solanaClient, transformations Transformations) solanaClient {
+	if solClient == nil {
+		apiClient := sw.NewAPIClient(sw.NewConfiguration())
+		return solanaClient{
+			client:          apiClient,
+			transformations: transformations,
+		}
+	}
+	return (*solClient)
 }
 
 func (s solanaClient) GetAuthorizationHeaders() context.Context {
@@ -36,10 +48,27 @@ func (s solanaClient) GetAuthorizationHeaders() context.Context {
 	return context.WithValue(context.Background(), sw.ContextAccessToken, key)
 }
 
-func (s solanaClient) GetClientsDecentralization() []models.ClientDecentralization {
+//TODO: Optimize into golang channels using RxGo to improve performance.
+//TODO: Handle errors
+func (s solanaClient) GetClientsDecentralization() ([]models.ClientDecentralization, error) {
 	auth := s.GetAuthorizationHeaders()
 	request := s.client.OtherApi.FetchNonValidators(auth)
 	resp, _, _ := request.Execute()
-	fmt.Printf("%+v\n", resp)
-	return []models.ClientDecentralization{models.ClientDecentralization{}}
+	data, err := json.Marshal(resp)
+
+	if err != nil {
+		fmt.Println(err)
+	}
+	current_timestamp := time.Now().Format(time.RFC3339)
+	filename := fmt.Sprintf("/home/evorun/workspace/decentralized_dashboard/data/solana_node_data_%v.json", current_timestamp)
+	os.WriteFile(filename, data, 0644)
+	// schemaModels, err := s.transformations.HandleClientTransformation(resp)
+
+	return []models.ClientDecentralization{}, nil
+}
+
+//TODO: Clean this up
+func (s solanaClient) GetNodeDecentralization() []models.GetNodeDecentralization {
+	auth := s.GetAuthorizationHeaders()
+	request := s.client.OtherApi.Fetch
 }
