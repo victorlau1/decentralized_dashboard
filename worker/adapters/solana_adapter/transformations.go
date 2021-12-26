@@ -14,7 +14,7 @@ type Transformations interface {
 type solanaBeachTransformations struct {
 }
 
-type solanaBeachNonValidatorModel struct {
+type SolanaBeachNonValidatorModel struct {
 	*sw.InlineResponse20015
 }
 
