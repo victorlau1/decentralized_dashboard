@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"strconv"
 	"strings"
 	"time"
 
@@ -22,19 +23,19 @@ type BitNode struct {
 }
 
 type NodeValues struct {
-	IPAddress        string
-	ProtocolVersion  float64
-	UserAgent        string
-	ConnectedSince   float64
-	Services         float64
-	Height           float64
-	Hostname         string
-	City             string
-	CountryCode      string
-	Latitude         float64
-	Longitude        float64
-	Timezone         string
-	ASN              string
+	IPAddress        string  //0 -- this is the key
+	ProtocolVersion  float64 //1
+	UserAgent        string  //2
+	ConnectedSince   float64 //3
+	Services         float64 //4
+	Height           float64 //5
+	Hostname         string  //6
+	City             string  //7
+	CountryCode      string  //8
+	Latitude         float64 //9
+	Longitude        float64 //10
+	Timezone         string  //11
+	ASN              string  //12
 	OrganizationName string
 	Timestamp        time.Time
 }
@@ -95,7 +96,7 @@ func BitNodeToNewLineJSON() {
 
 		nm := models.ClientDecentralization{}
 
-		if country, ok := element[6].(string); ok {
+		if country, ok := element[7].(string); ok {
 			nm.Country = country
 		}
 
@@ -114,6 +115,9 @@ func BitNodeToNewLineJSON() {
 		nm.Latitude = element[8].(float64)
 		nm.Longitude = element[9].(float64)
 
+		asn, _ := strconv.ParseFloat(strings.Replace(element[11].(string), "AS", "", 1), 64)
+		nm.ASN = asn
+
 		if orgName, ok := element[12].(string); ok {
 			nm.Organization = orgName
 		}
@@ -121,7 +125,7 @@ func BitNodeToNewLineJSON() {
 		enc2.Encode(nm)
 	}
 	current_timestamp := time.Now()
-	nf := fmt.Sprintf("/home/evorun/workspace/decentralized_dashboard/data/transformed/bit_nodes%v.json", current_timestamp)
+	nf := fmt.Sprintf("/home/evorun/workspace/decentralized_dashboard/data/transformed/bit_nodes_%v.json", current_timestamp)
 	nb, _ := ioutil.ReadAll(b2)
 	os.WriteFile(nf, nb, 0644)
 }

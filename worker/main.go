@@ -22,9 +22,9 @@ func main() {
 	// res, err := c.GetOwnershipDecentralization(ctx)
 	// fmt.Println(res)
 	// fmt.Println(err)
-	// helper.BitNodeToNewLineJSON()
+	helper.BitNodeToNewLineJSON()
 	// helper.SolanaToNewLineJSON()
-	helper.EthereumToNewLineJSON()
+	// helper.EthereumToNewLineJSON()
 }
 
 // WorkerConfig grabs the necessary settings to boot up the worker
