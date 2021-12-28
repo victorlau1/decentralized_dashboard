@@ -1,0 +1,24 @@
+{
+  "name": "scraper",
+  "version": "1.0.0",
+  "description": "Scrape against Ethernodes website",
+  "main": "scraper.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "jest": {
+    "testPathIgnorePatterns": [
+      "/node_modules/"
+    ]
+  },
+  "keywords": [
+    "scraper",
+    "ethernodes"
+  ],
+  "author": "lau.victor.w@gmail.com",
+  "license": "MIT",
+  "devDependencies": {
+    "jest": "^27.4.5"
+  },
+  "type": "module"
+}
