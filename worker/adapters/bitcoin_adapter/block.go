@@ -11,6 +11,7 @@ import (
 	"github.com/victorlau1/worker/models"
 	"os"
 	"encoding/json"
+	"time"
 	// "github.com/spf13/viper"
 )
 
@@ -94,12 +95,13 @@ func (c *Client) GetBlockDecentralization(ctx context.Context, blockNumber int) 
     if err := c.sendRequest(req, &res); err != nil {
         return nil, err
     }
-	data, _ := json.Marshal(res)
-	os.WriteFile(fmt.Sprintf("raw_data/bitcoin_block_%d.json", blockNumber), data, 0644)
     var r models.BlockDecentralization
     r.BlockNumber = res.Blocks[0].Height
-    r.TimeStamp = res.Blocks[0].Time
+    r.TimeStamp = time.Unix(int64(res.Blocks[0].Time), 0)
     r.BlockMiner = res.Blocks[0].Tx[0].Out[0].Addr
     r.Blockchain = "Bitcoin"
+	data, _ := json.Marshal(r)
+	// fmt.Println(data)
+	os.WriteFile(fmt.Sprintf("data/block_decentralization/bitcoin/%d.json", blockNumber), data, 0644)
     return &r, nil
 }

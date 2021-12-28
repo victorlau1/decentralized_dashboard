@@ -16,7 +16,7 @@ import (
 )
 
 const (
-    BaseURLV1 = "https://api.blockchair.com/bitcoin/addresses?offset=100&limit=100"
+    BaseURLV1 = "https://api.blockchair.com/bitcoin/addresses?limit=100&offset="
 	BaseURLV2 = "https://blockchain.info/block-height"
 )
 
@@ -33,12 +33,16 @@ type Client struct {
 
 func NewClient(apiKey string) *Client {
     return &Client{
-        BaseURL: BaseURLV2,
+        BaseURL: BaseURLV1,
         apiKey:  apiKey,
         HTTPClient: &http.Client{
             Timeout: time.Minute,
         },
     }
+}
+
+func (c *Client) SetClientURL(url string) {
+    c.BaseURL = url
 }
 
 func (c *Client) sendRequest(req *http.Request, v interface{}) error {

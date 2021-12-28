@@ -7,7 +7,7 @@ import (
     // "net/http"
     "context"
     // "os"
-    "strconv"
+    // "strconv"
     "github.com/elastic/go-elasticsearch/v8"
     "github.com/elastic/go-elasticsearch/v8/esapi"
     "github.com/victorlau1/worker/models"
@@ -17,14 +17,16 @@ import (
     // "time"
 )
 
-func JsonStruct(doc *models.BlockDecentralization) string {
+func JsonStruct(doc *models.DevDecentralization) string {
 
     // Create struct instance of the Elasticsearch fields struct object
 
-    docStruct := &models.BlockDecentralization{
-        BlockNumber: doc.BlockNumber,
+    docStruct := &models.DevDecentralization{
+        CommitID: doc.CommitID,
+        Committer: doc.Committer,
+        Email: doc.Email,
         TimeStamp: doc.TimeStamp,
-        BlockMiner: doc.BlockMiner,
+        Client: doc.Client,
         Blockchain: doc.Blockchain,
     }
 
@@ -41,7 +43,7 @@ func JsonStruct(doc *models.BlockDecentralization) string {
     return string(b)
 }
 
-func Writer(stru *models.BlockDecentralization){
+func Writer(stru *models.DevDecentralization){
     ctx := context.Background()
     cfg := elasticsearch.Config{
         Addresses: []string{
@@ -57,8 +59,8 @@ func Writer(stru *models.BlockDecentralization){
     bod := JsonStruct(stru)
     fmt.Println(bod)
     req := esapi.IndexRequest{
-        Index:      "block_decentralization",
-        DocumentID: strconv.Itoa(-1 * stru.BlockNumber - 1),
+        Index:      "dev_decentralization",
+        DocumentID: fmt.Sprintf("%s_%s", stru.CommitID, stru.Client),
         Body:       strings.NewReader(bod),
         Refresh:    "true",
     }
@@ -68,7 +70,7 @@ func Writer(stru *models.BlockDecentralization){
     }
     defer res.Body.Close()
     if res.IsError() {
-        log.Printf("%s ERROR indexing document ID=%d", res.Status(), stru.BlockNumber)
+        log.Printf("%s ERROR indexing document ID=d", res.Status())
     } else {
 
         // Deserialize the response into a map.

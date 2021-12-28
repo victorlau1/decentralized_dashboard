@@ -13,6 +13,7 @@ import (
 	"os"
 	"strconv"
 	"github.com/victorlau1/worker/models"
+	"time"
 	// "github.com/spf13/viper"
 )
 
@@ -43,12 +44,16 @@ func (c *Client) GetBlockDecentralization(ctx context.Context, blockNumber int) 
     if err := c.sendRequest(req, &res); err != nil {
         return nil, err
     }
-	data, _ := json.Marshal(res)
-	os.WriteFile(fmt.Sprintf("raw_data/ethereum_block_%d.json", blockNumber), data, 0644)
+	i, err := strconv.ParseInt(res.Result.TimeStamp, 10, 64)
+    if err != nil {
+        panic(err)
+    }
     var r models.BlockDecentralization
     r.BlockNumber, _ = strconv.Atoi(res.Result.BlockNumber)
-    r.TimeStamp, _ = strconv.Atoi(res.Result.TimeStamp)
+    r.TimeStamp = time.Unix(i, 0)
     r.BlockMiner = res.Result.BlockMiner
     r.Blockchain = "Ethereum"
+	data, _ := json.Marshal(r)
+	os.WriteFile(fmt.Sprintf("data/block_decentralization/ethereum/%d.json", blockNumber), data, 0644)
     return &r, nil
 }
