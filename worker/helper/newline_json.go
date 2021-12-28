@@ -12,8 +12,15 @@ import (
 
 	"github.com/pariz/gountries"
 	sw "github.com/victorlau1/solanaclient"
+	sol "github.com/victorlau1/worker/adapters/solana_adapter"
 	"github.com/victorlau1/worker/models"
 )
+
+var fakeTimestamp = time.Now().Add(time.Hour * 24 * -1)
+var bitnodeFilename = "/home/evorun/workspace/decentralized_dashboard/data/2021_12_23_21_52_bitcoin_nodes_data.json"
+var ethereumFilename = "/home/evorun/workspace/decentralized_dashboard/data/2021_12_25_ethernodes.txt"
+var solanaValidatorFilename = "/home/evorun/workspace/decentralized_dashboard/data/2021_12_23_21_54_solana_validators.json"
+var solanaNonValidatorFilename = "/home/evorun/workspace/decentralized_dashboard/data/solana_node_nonvalidators_data_2021-12-25T16:53:57-08:00.json"
 
 type BitNode struct {
 	Timestamp    int                      `json:"timestamp"`
@@ -41,8 +48,7 @@ type NodeValues struct {
 }
 
 func BitNodeToNewLineJSON() {
-	filename := "/home/evorun/workspace/decentralized_dashboard/data/2021_12_22_8_56_bitcoin_nodes_data.json"
-	f, err := os.ReadFile(filename)
+	f, err := os.ReadFile(bitnodeFilename)
 	if err != nil {
 		fmt.Printf("Error %v", err)
 	}
@@ -122,17 +128,18 @@ func BitNodeToNewLineJSON() {
 			nm.Organization = orgName
 		}
 
+		nm.Timestamp = fakeTimestamp
+
 		enc2.Encode(nm)
 	}
-	current_timestamp := time.Now()
+	current_timestamp := fakeTimestamp.Format("20060102150405")
 	nf := fmt.Sprintf("/home/evorun/workspace/decentralized_dashboard/data/transformed/bit_nodes_%v.json", current_timestamp)
 	nb, _ := ioutil.ReadAll(b2)
 	os.WriteFile(nf, nb, 0644)
 }
 
 func SolanaToNewLineJSON() {
-	filename := "/home/evorun/workspace/decentralized_dashboard/data/solana_node_nonvalidators_data_2021-12-22T21:31:40-08:00.json"
-	f, err := os.ReadFile(filename)
+	f, err := os.ReadFile(solanaNonValidatorFilename)
 	if err != nil {
 		fmt.Printf("Error %v", err)
 	}
@@ -168,7 +175,7 @@ func SolanaToNewLineJSON() {
 		}
 
 		nm.Blockchain = "solana"
-		nm.Timestamp = time.Now()
+		nm.Timestamp = fakeTimestamp //Used to fake timestamp data
 		nm.ClientVersion = v.GetVersion()
 
 		if v.GetAsn().Organization != nil {
@@ -188,7 +195,7 @@ func SolanaToNewLineJSON() {
 		enc.Encode(nm)
 	}
 
-	current_timestamp := time.Now()
+	current_timestamp := fakeTimestamp.Format("20060102150405") //Used to fake timestamp data
 	nf := fmt.Sprintf("/home/evorun/workspace/decentralized_dashboard/data/transformed/non_val_nodes_%v.json", current_timestamp)
 	nb, _ := ioutil.ReadAll(b)
 	os.WriteFile(nf, nb, 0644)
@@ -229,9 +236,64 @@ type SolValidators struct {
 }
 
 func SolanaValidatorsToNewLineJSON() {
+	f, err := os.ReadFile(solanaValidatorFilename)
+	if err != nil {
+		fmt.Printf("Error %v", err)
+	}
+
+	valResp := &[]SolValidators{}
+	json.Unmarshal(f, valResp)
+
 	b := new(bytes.Buffer)
 
-	current_timestamp := time.Now()
+	enc := json.NewEncoder(b)
+
+	for _, val := range *valResp {
+		nm := models.ClientDecentralization{}
+
+		client := sol.NewClient(nil, nil)
+		vac := client.GetValidatorNode(val.VoteAccount)
+
+		fmt.Println(val.VoteAccount)
+		nm.ASN = float64(val.AutonomousSystemNumber)
+		nm.Blockchain = "Solana"
+
+		if vac.Validator.GetLocation().City != nil {
+			nm.City = (*vac.Validator.Location.City)
+		}
+		if vac.Validator.GetLocation().Country != nil {
+			nm.Country = (*vac.Validator.Location.Country)
+		}
+
+		nm.Client = "RustClient"
+		nm.ClientVersion = val.SoftwareVersion
+
+		// nm.IPAddress =
+		if vac.Validator.GetLocation().Ll != nil {
+			nm.Latitude = float64((*vac.Validator.Location.Ll)[0])
+			nm.Longitude = float64((*vac.Validator.Location.Ll)[1])
+		}
+
+		if vac.Validator.GetAsn().Organization != nil {
+			nm.Organization = (*vac.Validator.Asn.Organization)
+		}
+
+		if vac.Validator.GetLocation().Region != nil {
+			nm.Region = (*vac.Validator.Location.Region)
+		}
+
+		nm.Validator = true
+		nm.Timestamp = fakeTimestamp
+
+		if vac.Validator.GetLocation().Timezone != nil {
+			nm.Timezone = (*vac.Validator.Location.Timezone)
+		}
+
+		enc.Encode(nm)
+		time.Sleep(1 * time.Microsecond) //100 requests per second so this throttles
+	}
+
+	current_timestamp := fakeTimestamp.Format("20060102150405")
 	nf := fmt.Sprintf("/home/evorun/workspace/decentralized_dashboard/data/transformed/val_nodes_%v.json", current_timestamp)
 	nb, _ := ioutil.ReadAll(b)
 	os.WriteFile(nf, nb, 0644)
@@ -250,8 +312,7 @@ type EthereumNodes struct {
 }
 
 func EthereumToNewLineJSON() {
-	filename := "/home/evorun/workspace/decentralized_dashboard/data/2021_12_25_ethernodes.txt"
-	f, err := os.ReadFile(filename)
+	f, err := os.ReadFile(ethereumFilename)
 	if err != nil {
 		fmt.Printf("Error %v", err)
 	}
@@ -276,9 +337,9 @@ func EthereumToNewLineJSON() {
 		//nm.Timezone
 		//nm.City
 		nm.Blockchain = "Ethereum"
-		nm.Timestamp = time.Now()
+		nm.Timestamp = fakeTimestamp
 		nm.ClientVersion = cols[5]
-		//nm.Organization
+		nm.Organization = cols[2] //Host is equivalent to organization?
 		nm.IPAddress = cols[1]
 		//nm.Longitude
 		//nm.Latitude
@@ -286,8 +347,8 @@ func EthereumToNewLineJSON() {
 		enc.Encode(nm)
 	}
 
-	current_timestamp := time.Now()
-	nf := fmt.Sprintf("/home/evorun/workspace/decentralized_dashboard/data/transformed/ethereum_%v.json", current_timestamp)
+	current_timestamp := fakeTimestamp.Format("20060102150405")
+	nf := fmt.Sprintf("/home/evorun/workspace/decentralized_dashboard/data/transformed/ethereum_client_%v.json", current_timestamp)
 	nb, _ := ioutil.ReadAll(b)
 	os.WriteFile(nf, nb, 0644)
 }

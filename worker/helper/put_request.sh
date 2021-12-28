@@ -1,0 +1,1 @@
+curl -X PUT "localhost:9200/client_decentralization-default/_bulk?pretty" -H 'Content-Type: application/json' --upload-file /home/evorun/workspace/decentralized_dashboard/data/transformed/bit_nodes_2021-12-23_22:44:25.240090637.json

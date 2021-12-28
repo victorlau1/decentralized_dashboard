@@ -1,0 +1,1 @@
+curl -H "Token: token" 'https://www.validators.app/api/v1/validators/mainnet.json'
