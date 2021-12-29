@@ -10,6 +10,7 @@ require (
 )
 
 require (
+	github.com/brianvoe/gofakeit/v6 v6.11.0 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/fsnotify/fsnotify v1.5.1 // indirect
 	github.com/go-playground/locales v0.14.0 // indirect
