@@ -44,7 +44,7 @@ func NewClient(solClient *solanaClient, transformations Transformations) solanaC
 
 func (s solanaClient) GetAuthorizationHeaders() context.Context {
 	key := viper.GetString("SOLANA_API_KEY")
-	fmt.Println("key", ":", key)
+	// fmt.Println("key", ":", key)
 	return context.WithValue(context.Background(), sw.ContextAccessToken, key)
 }
 
@@ -68,7 +68,15 @@ func (s solanaClient) GetClientsDecentralization() ([]models.ClientDecentralizat
 }
 
 //TODO: Clean this up
-func (s solanaClient) GetNodeDecentralization() []models.GetNodeDecentralization {
+func (s solanaClient) GetNodeDecentralization() []models.NodeDecentralization {
+	// auth := s.GetAuthorizationHeaders()
+	// request := s.client.OtherApi.Fetch
+	return []models.NodeDecentralization{}
+}
+
+func (s solanaClient) GetValidatorNode(pubkey string) sw.Validator {
 	auth := s.GetAuthorizationHeaders()
-	request := s.client.OtherApi.Fetch
+	request := s.client.ValidatorApi.FetchValidatorByVotepubkey(auth, pubkey)
+	resp, _, _ := request.Execute()
+	return resp
 }

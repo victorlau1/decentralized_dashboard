@@ -128,7 +128,7 @@ func BitNodeToNewLineJSON() {
 			nm.Organization = orgName
 		}
 
-		nm.Timestamp = fakeTimestamp
+		nm.Timestamp = fakeTimestamp.Format(time.RFC3339Nano)
 
 		enc2.Encode(nm)
 	}
@@ -175,7 +175,7 @@ func SolanaToNewLineJSON() {
 		}
 
 		nm.Blockchain = "solana"
-		nm.Timestamp = fakeTimestamp //Used to fake timestamp data
+		nm.Timestamp = fakeTimestamp.Format(time.RFC3339Nano) //Used to fake timestamp data
 		nm.ClientVersion = v.GetVersion()
 
 		if v.GetAsn().Organization != nil {
@@ -283,7 +283,7 @@ func SolanaValidatorsToNewLineJSON() {
 		}
 
 		nm.Validator = true
-		nm.Timestamp = fakeTimestamp
+		nm.Timestamp = fakeTimestamp.Format(time.RFC3339Nano)
 
 		if vac.Validator.GetLocation().Timezone != nil {
 			nm.Timezone = (*vac.Validator.Location.Timezone)
@@ -337,7 +337,7 @@ func EthereumToNewLineJSON() {
 		//nm.Timezone
 		//nm.City
 		nm.Blockchain = "Ethereum"
-		nm.Timestamp = fakeTimestamp
+		nm.Timestamp = fakeTimestamp.Format(time.RFC3339Nano)
 		nm.ClientVersion = cols[5]
 		nm.Organization = cols[2] //Host is equivalent to organization?
 		nm.IPAddress = cols[1]
