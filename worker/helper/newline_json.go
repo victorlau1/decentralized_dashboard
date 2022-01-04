@@ -160,7 +160,7 @@ func SolanaToNewLineJSON() {
 			nm.Country = (*loc.Country)
 		}
 
-		nm.Client = "RustClient"
+		nm.Client = "Solana"
 
 		if loc.Region != nil {
 			nm.Region = (*v.GetLocation().Region)
@@ -265,7 +265,7 @@ func SolanaValidatorsToNewLineJSON() {
 			nm.Country = (*vac.Validator.Location.Country)
 		}
 
-		nm.Client = "RustClient"
+		nm.Client = "Solana"
 		nm.ClientVersion = val.SoftwareVersion
 
 		// nm.IPAddress =
