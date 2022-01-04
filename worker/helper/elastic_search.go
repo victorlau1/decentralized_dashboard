@@ -8,7 +8,6 @@ import (
 	"net/http"
 	"os"
 	"strings"
-	"time"
 
 	"github.com/victorlau1/worker/models"
 )
@@ -59,7 +58,6 @@ func FormatBulkUpload(idNum int) {
 			}
 			nm := &models.ClientDecentralization{}
 			err = json.Unmarshal([]byte(row), nm)
-			nm.Timestamp = fakeTimestamp.Format(time.RFC3339Nano)
 			enc.Encode(indexInfo)
 			enc.Encode(nm)
 		}
@@ -73,10 +71,10 @@ func FormatBulkUpload(idNum int) {
 	}
 }
 
-func PutToBulkUpload(fileName string) {
+func PutToBulkUpload() {
 	url := fmt.Sprintf("%v/%v/%v", elasticHost, indexName, "_bulk?pretty")
 
-	entries, err := ioutil.ReadDir(pathDir)
+	entries, err := ioutil.ReadDir(outputPath)
 
 	if err != nil {
 		fmt.Printf("Failed to read directory %s", err)
@@ -109,3 +107,19 @@ func PutToBulkUpload(fileName string) {
 		fmt.Printf("%s", body)
 	}
 }
+
+//Create index
+// curl -X PUT "localhost:9200/proof_of_work?pretty"
+
+//Specify Pipeline
+
+//Update mappings
+// curl -X PUT "localhost:9200/fake_decentralization/_mapping?pretty" -H 'Content-Type: application/json' -d'
+// {
+//   "properties": {
+//     "location": {
+//       "type": "geo_point"
+//     }
+//   }
+// }
+// '

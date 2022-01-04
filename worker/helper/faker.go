@@ -30,7 +30,12 @@ func CreateFakeNodeClientData(iterations int) {
 	for i := 1; i <= iterations; i++ {
 		// fmt.Println(i % 6)
 
+		la, _ := gofakeit.LatitudeInRange(31, 47)
+		lo, _ := gofakeit.LongitudeInRange(-124.75583, -68.01197)
+
 		nm := &models.ClientDecentralization{
+			Longitude: lo,
+			Latitude:  la,
 			Timestamp: timestamps[i%6],
 		}
 
